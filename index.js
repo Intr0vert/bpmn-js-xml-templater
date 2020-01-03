@@ -24,6 +24,7 @@ class xmlTemplate {
    * @Param {text} text inside shape
    */
   addShape(h, w, x, y, text) {
+    let id = this.shapeCounter;
     let elementForTask = {
       task: [
         {
@@ -32,7 +33,7 @@ class xmlTemplate {
             isForCompensation: false,
             startQuantity: 1,
             name: `${text}`,
-            id: `ID_TASK_${this.shapeCounter}`
+            id: `ID_TASK_${id}`
           }
         }
       ]
@@ -42,7 +43,7 @@ class xmlTemplate {
       "bpmndi:BPMNShape": [
         {
           _attr: {
-            bpmnElement: `ID_TASK_${this.shapeCounter}`
+            bpmnElement: `ID_TASK_${id}`
           }
         },
         {
@@ -63,10 +64,17 @@ class xmlTemplate {
     this.process.push(elementForTask);
     this.diagram.push(elementForShape);
     this.shapeCounter++;
+    return {
+      id: id,
+      height: `${h}`,
+      width: `${w}`,
+      x: `${x}`,
+      y: `${y}`
+    }
   }
 
   /**
-   * Add new shape
+   * Add new edge
    * @Param {x1} x1 coordinate
    * @Param {y1} y1 coordinate
    * @Param {x2} x2 coordinate
@@ -122,6 +130,59 @@ class xmlTemplate {
     this.edgeCounter++;
   }
 
+  /**
+   * Connecting 2 shapes
+   * @Param {el1} start shape parametrs
+   * @Param {el2} end shape parametrs
+   */
+  connect(el1, el2) {
+    let elementForTask = {
+      sequenceFlow: [
+        {
+          _attr: {
+            id: `ID_CONNECTION_${this.edgeCounter}`,
+            sourceRef: `ID_TASK_${el1.id}`,
+            targetRef: `ID_TASK_${el2.id}`
+          }
+        }
+      ]
+    };
+
+    let elementForShape = {
+      "bpmndi:BPMNEdge": [
+        {
+          _attr: {
+            bpmnElement: `ID_CONNECTION_${this.edgeCounter}`
+          }
+        },
+        {
+          "omgdi:waypoint": [
+            {
+              _attr: {
+                x: `${parseFloat(el1.x) + parseFloat(el1.width)}`,
+                y: `${parseFloat(el1.y) + (parseFloat(el1.height) * 0.5)}`
+              }
+            }
+          ]
+        },
+        {
+          "omgdi:waypoint": [
+            {
+              _attr: {
+                x: `${parseFloat(el2.x)}`,
+                y: `${parseFloat(el2.y) + (parseFloat(el2.height) * 0.5)}`
+              }
+            }
+          ]
+        }
+      ]
+    };
+
+    this.process.push(elementForTask);
+    this.diagram.push(elementForShape);
+    this.edgeCounter++;
+  }
+
   get xml() {
     return xml(this.wrapper, {
       declaration: true,
@@ -132,11 +193,13 @@ class xmlTemplate {
 
 let test = new xmlTemplate(content);
 
-test.addShape(80, 100, 105, 150, "id_connection");
-test.addShape(80, 100, 360, 150, "???");
-test.addShape(80, 100, 560, 350, "3-rd element");
-test.addEdge(205,190,360,190,1,2);
-test.addEdge(205,190,560,390,1,2);
+let first = test.addShape(80, 100, 105, 150, "First element");
+let second = test.addShape(80, 100, 360, 150, "Second element");
+let third = test.addShape(80, 100, 560, 350, "Third element");
+
+test.connect(second, third);
+test.connect(first, third);
+test.connect(first, second);
 
 // console.log(test.xml);
 
