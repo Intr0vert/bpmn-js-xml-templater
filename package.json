@@ -1,15 +1,15 @@
 {
   "name": "bpmn-js-xml-templater",
   "version": "1.0.0",
-  "description": "",
+  "description": "Templater for bpmn-js",
   "main": "./index.js",
-  "git repository": "https://github.com/Intr0vert/bpmn-js-xml-templater",
+  "repository": "https://github.com/Intr0vert/bpmn-js-xml-templater",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "keywords": [],
-  "author": "Intr0vert <intr0vert.noname@mail.ru>",
+  "keywords": ["bpmn", "bpmn-js", "bpmn-templater", "bpmn-xml", "node", "xml", "schemes"],
+  "author": "Sergey Namestnikov <intr0vert.noname@mail.ru>",
   "license": "ISC",
   "dependencies": {
     "xml": "^1.0.1"
